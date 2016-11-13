@@ -21,6 +21,7 @@ import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
+from datetime import datetime
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -433,7 +434,7 @@ def rate():
     return render_template('main.html',username=username, pid=pid, error_message="Come on! Give a rate in (0, 10]")
 
 
-  res = g.conn.execute('SELECT * FROM movie where title = (%s)', mtitle).fetchall()
+  res = g.conn.execute('SELECT * FROM movie where lower(title) = lower(%s)', mtitle).fetchall()
   if len(res) == 0:
     return render_template('main.html',username=username, pid=pid, error_message="Oops! Movie is not found in the system!")
   mid = res[0]['mid']
