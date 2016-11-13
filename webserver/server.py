@@ -247,7 +247,7 @@ def searchMovies():
     return render_template("main.html", username=username, pid=people_id, error_message="Movie Title cannot be empty")
     
   # basic info of the movie
-  movie_info = g.conn.execute('SELECT * FROM movie where title = (%s)', title).fetchall();
+  movie_info = g.conn.execute('SELECT * FROM movie where LOWER(title) = LOWER(%s)', title).fetchall();
   if len(movie_info) == 0:
     return render_template("main.html", username=username, pid=people_id, error_message="404 NOT FOUND!")
   date = movie_info[0]['release_date']
@@ -303,7 +303,7 @@ def searchActor():
     return render_template("main.html", username=username, pid=people_id, error_message="Actor Name cannot be empty")
     
   # basic info of actor
-  actor_info = g.conn.execute('SELECT * FROM actor, people where actor.pid=people.pid and people.name = (%s)', actor).fetchall();
+  actor_info = g.conn.execute('SELECT * FROM actor, people where actor.pid=people.pid and LOWER(people.name) =LOWER(%s)', actor).fetchall();
   if len(actor_info) == 0:
     return render_template("main.html",username=username, pid=people_id, error_message="404 NOT FOUND!")
   dateofBirth = actor_info[0]['date_of_birth']
@@ -339,7 +339,7 @@ def searchDirector():
     return render_template("main.html",username=username, pid=people_id, error_message="Director Name cannot be empty")
     
   # basic info of director
-  director_info = g.conn.execute('SELECT * FROM director, people where director.pid=people.pid and people.name = (%s)', director).fetchall();
+  director_info = g.conn.execute('SELECT * FROM director, people where director.pid=people.pid and LOWER(people.name) = LOWER(%s)', director).fetchall();
   if len(director_info ) == 0:
     return render_template("main.html",username=username, pid=people_id, error_message="404 NOT FOUND!")
   dateofBirth = director_info[0]['date_of_birth']
@@ -373,7 +373,7 @@ def searchCompany():
     return render_template("main.html",username=username, pid=people_id, error_message="Company Name cannot be empty")
     
   # basic info of company
-  company_info = g.conn.execute('SELECT * FROM Company where company.name = (%s)', company).fetchall();
+  company_info = g.conn.execute('SELECT * FROM Company where LOWER(company.name) = LOWER(%s)', company).fetchall();
   if len(company_info) == 0:
     return render_template("main.html",username=username, pid=people_id, error_message="404 NOT FOUND!")
   country = company_info[0]['country']
