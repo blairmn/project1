@@ -6,8 +6,6 @@ Example webserver
 
 To run locally
 
-
-
     python server.py
 
 Go to http://localhost:8111 in your browser
@@ -215,7 +213,8 @@ def login():
     if len(res) == 0:
       return render_template("index.html", error_message="Incorrect login info")
     else:
-      print res[0]['nickname']
+      username = res[0]['nickname']
+      people_id = res[0]['pid']
       return render_template("main.html", username=res[0]['nickname'], pid = res[0]['pid'])
 
 @app.route('/new', methods=['POST'])
@@ -246,9 +245,9 @@ def register():
 @app.route('/searchMovies', methods=['POST'])
 def searchMovies():
   title = request.form['movie_title']
-  title=title.lower()
+  username = request.form['username']
+  people_id = request.form['pid']
   if len(title) == 0:
-<<<<<<< HEAD
     return render_template("main.html", username=username, pid=people_id, error_message="Movie Title cannot be empty")
   
   title = '%' + title.lower() + '%'
@@ -259,17 +258,6 @@ def searchMovies():
   #movie_info = g.conn.execute('SELECT * FROM movie where title = (%s)', title).fetchall();
   if len(movie_info) == 0:
     return render_template("main.html", username=username, pid=people_id, error_message="404 NOT FOUND!")
-=======
-    return render_template("main.html", error_message="Movie Title cannot be empty")
-  
-  # basic info of the movie
-  title = '%'+ title +'%'
-  cmd= 'SELECT * FROM movie where Lower(title) like :name1';
-  movie_info= g.conn.execute(text(cmd), name1=title).fetchall();
-  #movie_info = g.conn.execute('SELECT * FROM movie where Lower(title) =lower(%s)', title).fetchall();
-  if len(movie_info) == 0:
-    return render_template("main.html", error_message="404 NOT FOUND!")
->>>>>>> origin/master
   m_title=movie_info[0]['title']
   date = movie_info[0]['release_date']
   m_type = movie_info[0]['type']
@@ -318,9 +306,9 @@ def searchMovies():
 @app.route('/searchActor', methods=['POST'])
 def searchActor():
   actor = request.form['actor_name']
-  actor=actor.lower()
+  username = request.form['username']
+  people_id = request.form['pid']
   if len(actor) == 0:
-<<<<<<< HEAD
     return render_template("main.html", username=username, pid=people_id, error_message="Actor Name cannot be empty")
   
   actor = '%' + actor.lower() + '%'  
@@ -331,19 +319,6 @@ def searchActor():
   if len(actor_info) == 0:
     return render_template("main.html",username=username, pid=people_id, error_message="404 NOT FOUND!")
   actor_name = actor_info[0]['name']
-=======
-    return render_template("main.html", error_message="Actor Name cannot be empty")
-    
-  # basic info of actor
-  actor = '%'+ actor +'%'
-  print actor
-  cmd= 'SELECT * FROM actor,people where actor.pid=people.pid and Lower(people.name) like :name1';
-  actor_info= g.conn.execute(text(cmd), name1=actor).fetchall();
-  #actor_info = g.conn.execute('SELECT * FROM actor, people where actor.pid=people.pid and people.name = (%s)', actor).fetchall();
-  if len(actor_info) == 0:
-    return render_template("main.html", error_message="404 NOT FOUND!")
-  actor_name= actor_info[0]['name']
->>>>>>> origin/master
   dateofBirth = actor_info[0]['date_of_birth']
   country = actor_info[0]['country']
   tradeMark = actor_info[0]['trade_mark']
@@ -355,51 +330,35 @@ def searchActor():
   
   # basic info of the movie
   movie_info = g.conn.execute('SELECT * FROM actor_of, movie WHERE actor_of.pid = (%s) and actor_of.mid = movie.mid', pid).fetchall()
-  title=[]
-  mid=[]
-  date=[]
-  m_type=[]
-  desc=[]
+  m=[]
   for row in movie_info:
-      mid.append(row['mid'])
-      title.append(row['title'])
-      date.append(row['release_date'])
-      m_type.append(row['type'])
-      desc.append(row['description'])
+      r=[]
+      r.append(row['title'])
+      r.append(row['release_date'])
+      r.append(row['type'])
+      r.append(row['description'])
+      m.append(r)
 
   
-<<<<<<< HEAD
   return render_template('outputactor.html', aname=actor_name, dob=dateofBirth, country=country, tmark = tradeMark, knfor=knownfor, movie=m)
-=======
-  return render_template('outputactor.html', aname=actor_name, dob=dateofBirth, country=country, tmark = tradeMark, knfor=knownfor, mtitle=title, type=m_type, date=date, desc = desc)
->>>>>>> origin/master
 
 
 @app.route('/searchDirector', methods=['POST'])
 def searchDirector():
   director = request.form['director_name']
-  director=director.lower()
+  username = request.form['username']
+  people_id = request.form['pid']
   if len(director) == 0:
-    return render_template("main.html", error_message="Director Name cannot be empty")
+    return render_template("main.html",username=username, pid=people_id, error_message="Director Name cannot be empty")
     
   director = '%' + director.lower() + '%'  
   # basic info of director
-<<<<<<< HEAD
   #director_info = g.conn.execute('SELECT * FROM director, people where director.pid=people.pid and people.name = (%s)', director).fetchall();
   cmd= 'SELECT * FROM director,people where director.pid=people.pid and Lower(people.name) like :name1';
   director_info= g.conn.execute(text(cmd), name1=director).fetchall();
   if len(director_info ) == 0:
     return render_template("main.html",username=username, pid=people_id, error_message="404 NOT FOUND!")
   director_name = director_info[0]['name']
-=======
-  director = '%'+ director +'%'
-  cmd= 'SELECT * FROM director,people where director.pid=people.pid and Lower(people.name) like :name1';
-  director_info= g.conn.execute(text(cmd), name1=director).fetchall();
-  #director_info = g.conn.execute('SELECT * FROM director, people where director.pid=people.pid and people.name = (%s)', director).fetchall();
-  if len(director_info ) == 0:
-    return render_template("main.html", error_message="404 NOT FOUND!")
-  director_name=director_info[0]['name']
->>>>>>> origin/master
   dateofBirth = director_info[0]['date_of_birth']
   country = director_info[0]['country']
   bio = director_info[0]['bio']
@@ -411,32 +370,23 @@ def searchDirector():
   
   # basic info of the movie
   movie_info = g.conn.execute('SELECT * FROM Directed_by, movie WHERE Directed_by.pid = (%s) and Directed_by.mid = movie.mid', pid).fetchall()
-  mid=[]  
-  title=[]
-  date=[]
-  m_type=[]
-  desc=[]
+  m=[]
   for row in movie_info:
-      mid.append(row['mid'])
-      title.append(row['title'])
-      date.append(row['release_date'])
-      m_type.append(row['type'])
-      desc.append(row['description'])
-      
-  
+    r=[]
+    r.append(row['title'])
+    r.append(row['release_date'])
+    r.append(row['type'])
+    r.append(row['description'])
+    m.append(r)
 
-<<<<<<< HEAD
   return render_template('outputdirector.html', dname=director_name, dob=dateofBirth, country=country, bio = bio, knfor=knownfor, movie=m)
-=======
-  return render_template('outputdirector.html', dname=director_name, dob=dateofBirth, country=country, bio = bio, knfor=knownfor, mtitle=title, type=m_type, date=date, desc = desc)
->>>>>>> origin/master
 
 @app.route('/searchCompany', methods=['POST'])
 def searchCompany():
   company = request.form['company_name']
-  company=company.lower()
+  username = request.form['username']
+  people_id = request.form['pid']
   if len(company) == 0:
-<<<<<<< HEAD
     return render_template("main.html",username=username, pid=people_id, error_message="Company Name cannot be empty")
 
   company = '%' + company.lower() + '%'
@@ -447,19 +397,6 @@ def searchCompany():
   if len(company_info) == 0:
     return render_template("main.html",username=username, pid=people_id, error_message="404 NOT FOUND!")
   company_name = company_info[0]['name']
-=======
-    return render_template("main.html", error_message="Company Name cannot be empty")
-    
-  # basic info of company
-  company = '%'+ company +'%'
-  cmd= 'SELECT * FROM Company where Lower(company.name) like :name1';
-  company_info= g.conn.execute(text(cmd), name1=company).fetchall();
-  
-  #company_info = g.conn.execute('SELECT * FROM Company where company.name = (%s)', company).fetchall();
-  if len(company_info) == 0:
-    return render_template("main.html", error_message="404 NOT FOUND!")
-  company_name=company_info[0]['name']
->>>>>>> origin/master
   country = company_info[0]['country']
   webpage = company_info[0]['webpage']
   webpage='http://'+webpage
